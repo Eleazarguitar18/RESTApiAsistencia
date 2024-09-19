@@ -12,3 +12,43 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+model Usuario {
+  id_user         Int        @id @default(autoincrement())
+  Nombre          String
+  Apellido        String
+  Fecha_Nacimiento DateTime
+  Telefono        String?    // opcional
+  Email           String?    // opcional
+
+  // Relación con Asistencia
+  asistencias     Asistencia[]
+
+  // Relación inversa con Clase para los maestros
+  clasesImpartidas Clase[]    @relation("Maestros")
+}
+
+model Clase {
+  id_clase        Int        @id @default(autoincrement())
+  Nombre_Clase    String
+  Fecha           DateTime
+
+  // Relación con Asistencia
+  asistencias     Asistencia[]
+
+  // Relación con Usuario (maestro)
+  id_maestro      Int?
+  maestro         Usuario?   @relation(fields: [id_maestro], references: [id_user], name: "Maestros")
+}
+
+model Asistencia {
+  id_asistencia    Int        @id @default(autoincrement())
+  Fecha_Asistencia DateTime
+  Estado           String
+
+  // Relaciones con Usuario y Clase
+  id_asistente     Int
+  asistente        Usuario    @relation(fields: [id_asistente], references: [id_user])
+
+  id_clase         Int
+  clase            Clase      @relation(fields: [id_clase], references: [id_clase])
+}
