@@ -1,15 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { Login } from "./dto/login-auth.dto";
+import { Login } from './dto/login-auth.dto';
+import bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
+  async encriptar(password: string): Promise<string> {
+    try {
+      const salto: number = parseInt(process.env.SALT_ROUNDS);
+      const salt = await bcrypt.genSalt(salto);
+      // Genera el hash utilizando la contraseña y el salt
+      const hashedPassword = await bcrypt.hash(password, salt);
+      // console.log(hashedPassword)
+      return hashedPassword;
+    } catch (error) {
+      throw new Error(`Error al encriptar: ${error.message}`);
+    }
+  }
+  async comparePassword(password: string, passwordHas): Promise<boolean> {
+    return await bcrypt.compare(password, passwordHas);
+  }
   async create(createAuthDto: CreateAuthDto) {
-    
     return 'This action adds a new auth';
   }
-  async login (credenciales: Login) {
-    
+  async login(credenciales: Login) {
     return 'This action adds a new auth';
   }
 
