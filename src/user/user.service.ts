@@ -6,16 +6,16 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
   create(createUserDto: CreateUserDto) {
-    const [day, month, year] = createUserDto.Fecha_Nacimiento.split('-');
+    const [day, month, year] = createUserDto.fecha_nacimiento.split('-');
     const formattedDate = new Date(`${year}-${month}-${day}`);
 
     return this.prisma.usuario.create({
       data: {
-        Nombre: createUserDto.Nombre,
-        Apellido: createUserDto.Apellido,
-        Fecha_Nacimiento: formattedDate, // Ahora es un Date válido
-        Telefono: createUserDto.Telefono,
-        Email: createUserDto.Email,
+        nombre: createUserDto.nombre,
+        apellido: createUserDto.apellido,
+        fecha_nacimiento: formattedDate, // Ahora es un Date válido
+        telefono: createUserDto.telefono,
+        email: createUserDto.email,
       },
     });
     // return 'This action adds a new user';
@@ -33,7 +33,7 @@ export class UserService {
     // const emailUser: string = email;
     return this.prisma.usuario.findFirst({
       where: {
-        Email: email,
+        email: email,
       },
     });
   }
