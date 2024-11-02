@@ -2,9 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { Login } from './dto/login-auth.dto';
+import { PrismaService } from '../prisma/prisma.service';
+
 import bcrypt from 'bcrypt';
 @Injectable()
 export class AuthService {
+  constructor(private prisma: PrismaService) {}
+  async IniciarSesion(credenciales: Login) {}
   async encriptar(password: string): Promise<string> {
     try {
       const salto: number = parseInt(process.env.SALT_ROUNDS);
@@ -32,6 +36,7 @@ export class AuthService {
   }
 
   async findOne(id: number) {
+    const user = this.prisma.usuario.findMany();
     return `This action returns a #${id} auth`;
   }
 

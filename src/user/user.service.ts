@@ -5,11 +5,11 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-  create(createUserDto: CreateUserDto) {
-    const [day, month, year] = createUserDto.fecha_nacimiento.split('-');
-    const formattedDate = new Date(`${year}-${month}-${day}`);
-
-    return this.prisma.usuario.create({
+  async create(createUserDto: CreateUserDto) {
+    // const [day, month, year] = createUserDto.fecha_nacimiento.split('-');
+    // const formattedDate = new Date(`${year}-${month}-${day}`);
+    const formattedDate = createUserDto.fecha_nacimiento;
+    const user = await this.prisma.usuario.create({
       data: {
         nombre: createUserDto.nombre,
         apellido: createUserDto.apellido,
@@ -18,15 +18,35 @@ export class UserService {
         email: createUserDto.email,
       },
     });
+    console.log('se agrego el siguiente dato: ', user);
+
+    return user;
     // return 'This action adds a new user';
   }
 
   async findAll() {
+    const datos = await this.prisma.usuario.findMany();
+    if (datos.length === 0) {
+      return {
+        status: 404,
+        mesasage: `No se encontraron datos`,
+        data: datos,
+      };
+    }
     const data = {
       status: 200,
       mesasage: `This action returns all user`,
-      data: await this.prisma.usuario.findMany(),
+      data: datos,
     };
+    try {
+    } catch (error) {
+      const data = {
+        status: 500,
+        mesasage: `Error al listar usuarios`,
+        error: error.mesasage,
+        data: null,
+      };
+    }
     return data;
   }
   async buscar_email(email: string) {
